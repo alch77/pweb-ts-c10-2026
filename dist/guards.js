@@ -1,0 +1,34 @@
+import { getSession } from "./storage.js";
+function redirectByRole() {
+    const session = getSession();
+    if (!session || !session.token) {
+        window.location.replace("login.html");
+        return;
+    }
+    if (session.role === "user") {
+        window.location.replace("operator.html");
+    }
+    else {
+        window.location.replace("index.html");
+    }
+}
+export function requireAuth() {
+    const session = getSession();
+    if (!session || !session.token) {
+        window.location.replace("login.html");
+        return false;
+    }
+    return true;
+}
+export function requireRole(allowedRoles) {
+    const session = getSession();
+    if (!session || !session.token) {
+        window.location.replace("login.html");
+        return false;
+    }
+    if (!allowedRoles.includes(session.role)) {
+        redirectByRole();
+        return false;
+    }
+    return true;
+}

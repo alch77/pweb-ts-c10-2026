@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Antrean Rumah Sakit</title>
+  <link rel="stylesheet" href="src/login.css">
+<script type="module" src="dist/login.js"></script></head>
+<body>
+  <main class="login-container">
+    <section class="login-card">
+      <div class="logo">✚</div>
+
+      <h1>Antrean Rumah Sakit</h1>
+      <p class="subtitle">Silakan login untuk melanjutkan</p>
+
+      <form id="loginForm">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Masukkan username"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Masukkan password"
+          autocomplete="current-password"
+          required
+        >
+
+        <p id="errorMessage" class="error-message" role="alert"></p>
+
+        <button type="submit" id="loginButton">Login</button>
+      </form>
+
+      <p class="demo-note">
+        Sistem antrean digital untuk pelayanan rumah sakit.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

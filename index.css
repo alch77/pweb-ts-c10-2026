@@ -1,0 +1,224 @@
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: 'Segoe UI', sans-serif;
+  color: #51445f;
+  background: #fff7fb;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 5%;
+  background: #dba8d4;
+  color: white;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 5px 18px #dba8d433;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.topbar nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.topbar nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.topbar nav a:hover {
+  color: #704b79;
+}
+
+.dashboard {
+  width: min(100% - 32px, 1100px);
+  margin: 32px auto;
+}
+
+.card,
+.menu-card {
+  padding: 24px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #f3ddec;
+  border-radius: 22px;
+  box-shadow: 0 6px 20px #a76d9810;
+}
+
+.card h2 {
+  margin-top: 0;
+  color: #b36aa9;
+}
+
+.card h3,
+.menu-card h3 {
+  margin-top: 0;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.menu-card {
+  transition: 0.2s;
+}
+
+.menu-card:hover {
+  transform: translateY(-4px);
+  background: #fffaff;
+}
+
+.menu-card a {
+  color: #b36aa9;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.menu-card a:hover {
+  color: #80518b;
+}
+
+form {
+  width: 100%;
+  max-width: 520px;
+  margin-top: 24px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px solid #ead6e8;
+  border-radius: 12px;
+  background: #fffbfe;
+  color: #51445f;
+  font: inherit;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #d49acb;
+  box-shadow: 0 0 0 3px #efd8ed;
+}
+
+button {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #c786bd;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #ae6ca5;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+th,
+td {
+  padding: 13px;
+  border-bottom: 1px solid #f3e8f1;
+  text-align: left;
+}
+
+th {
+  background: #f9eaf6;
+  color: #98618f;
+}
+
+#queueMessage,
+#errorMessage {
+  margin-top: 12px;
+}
+
+#errorMessage {
+  color: #d14f71;
+}
+
+#ticketResult {
+  margin-top: 24px;
+  padding: 26px;
+  border-radius: 20px;
+  background: #fff0fa;
+  border: 1px solid #f0cce7;
+}
+
+#ticketNumber {
+  color: #b65eaa;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar nav {
+    gap: 12px;
+  }
+
+  .dashboard {
+    margin-top: 20px;
+  }
+
+  .card,
+  .menu-card {
+    padding: 18px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

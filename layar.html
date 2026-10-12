@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layar Antrean | Rumah Sakit</title>
+  <link rel="stylesheet" href="index.css">
+  <script type="module" src="dist/screen.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Layar Antrean Rumah Sakit</h1>
+    <a href="ambil-antrian.html">Ambil Antrean</a>
+  </header>
+
+  <main class="dashboard">
+    <section class="welcome-card">
+      <p class="eyebrow">INFORMASI LAYANAN</p>
+      <h2>Antrean Pasien</h2>
+      <p>Silakan menunggu sampai nomor antrean kamu dipanggil.</p>
+    </section>
+
+    <section class="menu-grid">
+      <article class="menu-card">
+        <h3>Poli Umum</h3>
+        <p>Nomor dipanggil</p>
+        <h2 id="current-umum">-</h2>
+      </article>
+
+      <article class="menu-card">
+        <h3>Poli Gigi</h3>
+        <p>Nomor dipanggil</p>
+        <h2 id="current-gigi">-</h2>
+      </article>
+
+      <article class="menu-card">
+        <h3>Poli Anak</h3>
+        <p>Nomor dipanggil</p>
+        <h2 id="current-anak">-</h2>
+      </article>
+    </section>
+
+    <section class="menu-card" style="margin-top: 24px;">
+      <h3>Daftar Antrean</h3>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr>
+              <th style="padding: 12px;">Nomor</th>
+              <th style="padding: 12px;">Pasien</th>
+              <th style="padding: 12px;">Layanan</th>
+              <th style="padding: 12px;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="screenTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
