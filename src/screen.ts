@@ -1,0 +1,85 @@
+import { getTickets } from "./storage.js";
+import type { QueueType } from "./types.js";
+
+const table =
+  document.querySelector<HTMLTableSectionElement>("#screenTable");
+
+const currentNumber: Record<QueueType, string> = {
+  umum: "current-umum",
+  gigi: "current-gigi",
+  anak: "current-anak",
+};
+
+function renderScreen(): void {
+  const tickets = getTickets();
+
+  if (table) {
+    table.replaceChildren();
+
+    const visibleTickets = tickets.filter(
+      (ticket) =>
+        ticket.status === "menunggu" ||
+        ticket.status === "dipanggil"
+    );
+
+    if (visibleTickets.length === 0) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+
+      cell.colSpan = 4;
+      cell.textContent = "Belum ada antrean aktif.";
+      cell.style.padding = "12px";
+
+      row.appendChild(cell);
+      table.appendChild(row);
+    } else {
+      visibleTickets.forEach((ticket) => {
+        const row = document.createElement("tr");
+
+        const values = [
+          ticket.queueNumber,
+          ticket.patientName,
+          ticket.queueType,
+          ticket.status,
+        ];
+
+        values.forEach((value) => {
+          const cell = document.createElement("td");
+
+          cell.textContent = value;
+          cell.style.padding = "12px";
+
+          row.appendChild(cell);
+        });
+
+        table.appendChild(row);
+      });
+    }
+  }
+
+  (Object.keys(currentNumber) as QueueType[]).forEach((type) => {
+    const element = document.getElementById(currentNumber[type]);
+
+    if (!element) return;
+
+    const calledTicket = [...tickets]
+      .reverse()
+      .find(
+        (ticket) =>
+          ticket.queueType === type &&
+          ticket.status === "dipanggil"
+      );
+
+    element.textContent = calledTicket
+      ? calledTicket.queueNumber
+      : "-";
+  });
+}
+
+renderScreen();
+
+// Perbarui tampilan jika antrean berubah di tab browser lain.
+window.addEventListener("storage", renderScreen);
+
+// Perbarui juga secara berkala.
+window.setInterval(renderScreen, 3000);

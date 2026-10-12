@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operator Antrean | Rumah Sakit</title>
+  <link rel="stylesheet" href="index.css">
+  <script type="module" src="dist/queue.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Operator Antrean</h1>
+    <button id="logoutButton" type="button">Logout</button>
+  </header>
+
+  <main class="dashboard">
+    <section class="welcome-card">
+      <p class="eyebrow">LAYANAN PASIEN</p>
+      <h2 id="welcomeMessage">Kelola Antrean Pasien</h2>
+      <p>Tambahkan pasien dan perbarui status antrean.</p>
+    </section>
+
+    <section class="menu-card" style="margin-top: 24px;">
+      <h3>Ambil Nomor Antrean</h3>
+
+      <form id="queueForm">
+        <label for="patientName">Nama pasien</label>
+        <input
+          id="patientName"
+          type="text"
+          placeholder="Masukkan nama pasien"
+          required
+        >
+
+        <label for="queueType">Jenis layanan</label>
+        <select id="queueType" required>
+          <option value="umum">Poli Umum</option>
+          <option value="gigi">Poli Gigi</option>
+          <option value="anak">Poli Anak</option>
+        </select>
+
+        <button type="submit">Tambah Antrean</button>
+        <p id="queueMessage" role="status"></p>
+      </form>
+    </section>
+
+    <section class="menu-card" style="margin-top: 24px;">
+      <h3>Daftar Antrean</h3>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding: 12px;">Nomor</th>
+              <th style="padding: 12px;">Pasien</th>
+              <th style="padding: 12px;">Layanan</th>
+              <th style="padding: 12px;">Status</th>
+              <th style="padding: 12px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="ticketTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p style="margin-top: 24px;">
+      <a href="index.html">Kembali ke Dashboard</a>
+    </p>
+  </main>
+</body>
+</html>

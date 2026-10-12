@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambil Antrean - Rumah Sakit</title>
+  <link rel="stylesheet" href="index.css">
+  <script type="module" src="dist/public-queue.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Rumah Sakit</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="ambil-antrian.html">Ambil Antrean</a>
+      <a href="layar.html">Layar Antrean</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <section class="card">
+      <h2>Ambil Nomor Antrean</h2>
+      <p>Isi data pasien untuk mendapatkan nomor antrean.</p>
+
+      <form id="publicQueueForm">
+        <label for="patientName">Nama Pasien</label>
+        <input
+          type="text"
+          id="patientName"
+          name="patientName"
+          placeholder="Masukkan nama pasien"
+          required
+        >
+
+        <label for="queueType">Jenis Antrean</label>
+        <select id="queueType" name="queueType" required>
+          <option value="umum">Poli Umum</option>
+          <option value="gigi">Poli Gigi</option>
+          <option value="anak">Poli Anak</option>
+        </select>
+
+        <button type="submit">Ambil Antrean</button>
+      </form>
+
+      <p id="queueMessage" role="status" aria-live="polite"></p>
+
+      <div id="ticketResult" hidden>
+        <h3>Nomor Antrean Kamu</h3>
+        <p id="ticketNumber"></p>
+        <p>Silakan tunggu hingga nomor antrean dipanggil.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

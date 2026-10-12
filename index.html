@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Antrean Rumah Sakit</title>
+  <link rel="stylesheet" href="index.css">
+  <script type="module" src="dist/main.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Antrean Rumah Sakit</h1>
+    <button id="logoutButton" type="button">Logout</button>
+  </header>
+
+  <main class="dashboard">
+    <section class="welcome-card">
+      <p class="eyebrow">DASHBOARD</p>
+      <h2 id="welcomeMessage">Selamat datang!</h2>
+      <p>Kelola layanan dan antrean pasien rumah sakit dari satu tempat.</p>
+    </section>
+
+    <section class="menu-grid">
+      <a class="menu-card" href="operator.html">
+        <span class="menu-icon">♧</span>
+        <h3>Operator Antrean</h3>
+        <p>Kelola proses antrean pasien.</p>
+      </a>
+
+      <a class="menu-card" href="ambil-antrian.html">
+        <span class="menu-icon">＋</span>
+        <h3>Ambil Antrean</h3>
+        <p>Masuk ke layanan pengambilan antrean.</p>
+      </a>
+
+      <a class="menu-card" href="layar.html">
+        <span class="menu-icon">▣</span>
+        <h3>Layar Antrean</h3>
+        <p>Lihat informasi antrean yang berjalan.</p>
+      </a>
+    </section>
+  </main>
+</body>
+</html>
