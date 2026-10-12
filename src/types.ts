@@ -1,19 +1,12 @@
+export type UserRole = "admin" | "moderator" | "user";
 
-export type UserRole =
-  | "admin"
-  | "moderator"
-  | "user";
+// jenis antrian bersifat dinamis karena admin dapat menambah/menghapusnya, jadi bukan union tetap
+export type QueueCode = string;
 
-export type QueueType =
-  | "umum"
-  | "gigi"
-  | "anak";
+/** @deprecated Gunakan QueueCode. Dipertahankan agar queue.ts & screen.ts tetap kompatibel. */
+export type QueueType = QueueCode;
 
-export type QueuePriority =
-  | "normal"
-  | "lansia"
-  | "disabilitas"
-  | "vip";
+export type QueuePriority = "normal" | "lansia" | "disabilitas" | "vip";
 
 export type TicketStatus =
   | "menunggu"
@@ -31,7 +24,7 @@ export interface UserSession {
 }
 
 export interface QueueMaster {
-  code: string;
+  code: QueueCode;
   name: string;
   isActive: boolean;
 }
@@ -39,8 +32,8 @@ export interface QueueMaster {
 export interface Ticket {
   id: string;
   queueNumber: string;
-  queueType: QueueType;
-  patientName: string;
+  queueType: QueueCode;
+  patientName?: string;
   priority: QueuePriority;
   status: TicketStatus;
   createdAt: string;
@@ -66,9 +59,12 @@ export interface ActiveQueue {
 }
 
 export interface QueueCounter {
-  queueCode: string;
+  queueCode: QueueCode;
   lastNumber: number;
 }
+
+// penyimpanan counter nomor terakhir per kode jenis antrian: { A: 3, B: 12 }
+export type QueueCounterMap = Record<QueueCode, number>;
 
 export interface QueueSummary {
   total: number;

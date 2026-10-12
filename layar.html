@@ -7,11 +7,15 @@
   <title>Layar Antrean | Rumah Sakit</title>
   <link rel="stylesheet" href="index.css">
   <script type="module" src="dist/screen.js"></script>
+  <script type="module" src="dist/nav.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <h1>Layar Antrean Rumah Sakit</h1>
-    <a href="ambil-antrian.html">Ambil Antrean</a>
+    <nav aria-label="Navigasi utama">
+      <a href="ambil-antrian.html">Ambil Antrean</a>
+      <a id="staffLink" href="login.html">Masuk Staf</a>
+    </nav>
   </header>
 
   <main class="dashboard">

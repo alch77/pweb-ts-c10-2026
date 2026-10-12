@@ -1,45 +1,117 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | Antrean Rumah Sakit</title>
+  <title>Dashboard Admin | Antrean Rumah Sakit</title>
   <link rel="stylesheet" href="index.css">
-  <script type="module" src="dist/main.js" defer></script>
+  <script type="module" src="dist/admin.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <h1>Antrean Rumah Sakit</h1>
-    <button id="logoutButton" type="button">Logout</button>
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">✚</span>
+      <span>Antrean Rumah Sakit</span>
+    </a>
+
+    <nav aria-label="Navigasi utama">
+      <a href="index.html" aria-current="page">Dashboard</a>
+      <a href="operator.html">Operator</a>
+      <a href="layar.html">Layar Antrean</a>
+      <a href="ambil-antrian.html">Ambil Antrean</a>
+    </nav>
+
+    <div class="user-area">
+      <div class="user-chip">
+        <span id="userName" class="user-name">-</span>
+        <span id="userRole" class="role-badge">-</span>
+      </div>
+      <button id="logoutButton" type="button" class="btn btn-ghost btn-sm">Logout</button>
+    </div>
   </header>
 
   <main class="dashboard">
-    <section class="welcome-card">
-      <p class="eyebrow">DASHBOARD</p>
-      <h2 id="welcomeMessage">Selamat datang!</h2>
-      <p>Kelola layanan dan antrean pasien rumah sakit dari satu tempat.</p>
-    </section>
+    <div class="page-head">
+      <div>
+        <h2>Dashboard Admin</h2>
+        <p class="page-sub">Reset setiap hari agar penomoran antrian mulai dari awal.</p>
+      </div>
+      <button id="resetButton" type="button" class="btn btn-danger">Reset Antrian</button>
+    </div>
 
-    <section class="menu-grid">
-      <a class="menu-card" href="operator.html">
-        <span class="menu-icon">♧</span>
-        <h3>Operator Antrean</h3>
-        <p>Kelola proses antrean pasien.</p>
-      </a>
+    <div class="admin-grid">
+      <!-- Manajemen jenis antrian -->
+      <section class="panel" aria-labelledby="queueTypeTitle">
+        <h3 id="queueTypeTitle">Jenis antrian</h3>
 
-      <a class="menu-card" href="ambil-antrian.html">
-        <span class="menu-icon">＋</span>
-        <h3>Ambil Antrean</h3>
-        <p>Masuk ke layanan pengambilan antrean.</p>
-      </a>
+        <form id="queueTypeForm" class="inline-form" novalidate>
+          <div class="field field-code">
+            <label for="queueCode">Kode</label>
+            <input
+              id="queueCode"
+              name="queueCode"
+              type="text"
+              maxlength="1"
+              placeholder="C"
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </div>
 
-      <a class="menu-card" href="layar.html">
-        <span class="menu-icon">▣</span>
-        <h3>Layar Antrean</h3>
-        <p>Lihat informasi antrean yang berjalan.</p>
-      </a>
-    </section>
+          <div class="field field-grow">
+            <label for="queueName">Nama</label>
+            <input
+              id="queueName"
+              name="queueName"
+              type="text"
+              maxlength="30"
+              placeholder="Contoh: Farmasi"
+              autocomplete="off"
+            >
+          </div>
+
+          <button type="submit" class="btn btn-add">Tambah</button>
+        </form>
+
+        <p id="queueTypeMessage" class="form-message" role="status" aria-live="polite"></p>
+
+        <ul id="queueTypeList" class="queue-list"></ul>
+      </section>
+
+      <!-- Penerbitan tiket manual -->
+      <section class="panel" aria-labelledby="ticketTitle">
+        <h3 id="ticketTitle">Terbitkan tiket</h3>
+
+        <form id="ticketForm" class="inline-form" novalidate>
+          <div class="field field-grow">
+            <label for="ticketQueue">Jenis antrian</label>
+            <select id="ticketQueue" name="ticketQueue"></select>
+          </div>
+
+          <div class="field">
+            <label for="ticketPriority">Prioritas</label>
+            <select id="ticketPriority" name="ticketPriority"></select>
+          </div>
+
+          <button type="submit" class="btn btn-add">Terbitkan</button>
+        </form>
+
+        <p id="ticketMessage" class="form-message" role="status" aria-live="polite"></p>
+
+        <div id="ticketGroups" class="ticket-groups"></div>
+      </section>
+    </div>
   </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="confirmDialog" class="dialog" aria-labelledby="confirmTitle">
+    <h3 id="confirmTitle">Konfirmasi</h3>
+    <p id="confirmText"></p>
+    <div class="dialog-actions">
+      <button id="confirmCancel" type="button" class="btn btn-ghost">Batal</button>
+      <button id="confirmOk" type="button" class="btn btn-danger">Lanjutkan</button>
+    </div>
+  </dialog>
 </body>
 </html>

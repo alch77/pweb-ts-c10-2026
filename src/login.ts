@@ -14,27 +14,19 @@ interface UserDetailResponse {
   role: UserRole;
 }
 
-const form =
-  document.querySelector<HTMLFormElement>("#loginForm");
+const form = document.querySelector<HTMLFormElement>("#loginForm");
 
-const usernameInput =
-  document.querySelector<HTMLInputElement>("#username");
+const usernameInput = document.querySelector<HTMLInputElement>("#username");
 
-const passwordInput =
-  document.querySelector<HTMLInputElement>("#password");
+const passwordInput = document.querySelector<HTMLInputElement>("#password");
 
 const errorMessage =
   document.querySelector<HTMLParagraphElement>("#errorMessage");
 
-const loginButton =
-  document.querySelector<HTMLButtonElement>("#loginButton");
+const loginButton = document.querySelector<HTMLButtonElement>("#loginButton");
 
-async function getUserDetail(
-  userId: number
-): Promise<UserDetailResponse> {
-  const response = await fetch(
-    `https://dummyjson.com/users/${userId}`
-  );
+async function getUserDetail(userId: number): Promise<UserDetailResponse> {
+  const response = await fetch(`https://dummyjson.com/users/${userId}`);
 
   if (!response.ok) {
     throw new Error("Gagal mengambil data pengguna.");
@@ -53,13 +45,7 @@ async function getUserDetail(
   return user;
 }
 
-if (
-  form &&
-  usernameInput &&
-  passwordInput &&
-  errorMessage &&
-  loginButton
-) {
+if (form && usernameInput && passwordInput && errorMessage && loginButton) {
   form.addEventListener("submit", async (event: SubmitEvent) => {
     event.preventDefault();
 
@@ -69,32 +55,28 @@ if (
     errorMessage.textContent = "";
 
     if (!username || !password) {
-      errorMessage.textContent =
-        "Username dan password wajib diisi.";
+      errorMessage.textContent = "Username dan password wajib diisi.";
       return;
     }
 
     loginButton.disabled = true;
     loginButton.textContent = "Memproses...";
 
-    // Hapus sesi sebelumnya agar tidak memakai data Emily
+    // hapus sesi sebelumnya agar tidak memakai data Emily
     clearSession();
 
     try {
-      const response = await fetch(
-        "https://dummyjson.com/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-            expiresInMins: 30,
-          }),
-        }
-      );
+      const response = await fetch("https://dummyjson.com/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          expiresInMins: 30,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Username atau password salah.");
@@ -106,17 +88,12 @@ if (
         throw new Error("Data login tidak lengkap.");
       }
 
-      // Ambil detail pengguna sesuai ID hasil login
+      // ambil detail pengguna sesuai ID hasil login
       const user = await getUserDetail(data.id);
 
-      // Pastikan detail pengguna sesuai dengan akun login
-      if (
-        user.id !== data.id ||
-        user.username !== data.username
-      ) {
-        throw new Error(
-          "Data pengguna tidak sesuai dengan hasil login."
-        );
+      // pastikan detail pengguna sesuai dengan akun login
+      if (user.id !== data.id || user.username !== data.username) {
+        throw new Error("Data pengguna tidak sesuai dengan hasil login.");
       }
 
       const session: UserSession = {
@@ -136,9 +113,8 @@ if (
         role: session.role,
       });
 
-      if (session.role === "admin") {
-        window.location.replace("admin.html");
-      } else if (session.role === "moderator") {
+      // Admin & moderator -> Dashboard Admin, user biasa -> Panel Operator
+      if (session.role === "admin" || session.role === "moderator") {
         window.location.replace("index.html");
       } else {
         window.location.replace("operator.html");

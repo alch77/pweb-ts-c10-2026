@@ -34,7 +34,7 @@ if (requireRole(["user"])) {
             const row = document.createElement("tr");
             const values = [
                 ticket.queueNumber,
-                ticket.patientName,
+                ticket.patientName ?? "-",
                 ticket.queueType,
                 ticket.status,
             ];
@@ -75,6 +75,7 @@ if (requireRole(["user"])) {
             dipanggil: "selesai",
             selesai: "menunggu",
             dibatalkan: "menunggu",
+            dilewati: "menunggu",
         };
         current.status = nextStatus[current.status];
         saveTickets(tickets);
@@ -110,6 +111,7 @@ if (requireRole(["user"])) {
             queueNumber,
             queueType,
             patientName,
+            priority: "normal",
             status: "menunggu",
             createdAt: new Date().toISOString(),
         };
