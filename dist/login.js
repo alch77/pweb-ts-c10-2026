@@ -17,19 +17,24 @@ async function getUserDetail(userId) {
     }
     return user;
 }
-if (form && usernameInput && passwordInput && errorMessage && loginButton) {
+if (form &&
+    usernameInput &&
+    passwordInput &&
+    errorMessage &&
+    loginButton) {
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const username = usernameInput.value.trim();
         const password = passwordInput.value;
         errorMessage.textContent = "";
         if (!username || !password) {
-            errorMessage.textContent = "Username dan password wajib diisi.";
+            errorMessage.textContent =
+                "Username dan password wajib diisi.";
             return;
         }
         loginButton.disabled = true;
         loginButton.textContent = "Memproses...";
-        // hapus sesi sebelumnya agar tidak memakai data Emily
+        // Hapus sesi sebelumnya agar tidak memakai data Emily
         clearSession();
         try {
             const response = await fetch("https://dummyjson.com/auth/login", {
@@ -50,10 +55,11 @@ if (form && usernameInput && passwordInput && errorMessage && loginButton) {
             if (!data.accessToken || !data.id) {
                 throw new Error("Data login tidak lengkap.");
             }
-            // ambil detail pengguna sesuai ID hasil login
+            // Ambil detail pengguna sesuai ID hasil login
             const user = await getUserDetail(data.id);
-            // pastikan detail pengguna sesuai dengan akun login
-            if (user.id !== data.id || user.username !== data.username) {
+            // Pastikan detail pengguna sesuai dengan akun login
+            if (user.id !== data.id ||
+                user.username !== data.username) {
                 throw new Error("Data pengguna tidak sesuai dengan hasil login.");
             }
             const session = {
@@ -70,8 +76,10 @@ if (form && usernameInput && passwordInput && errorMessage && loginButton) {
                 firstName: session.firstName,
                 role: session.role,
             });
-            // Admin & moderator -> Dashboard Admin, user biasa -> Panel Operator
-            if (session.role === "admin" || session.role === "moderator") {
+            if (session.role === "admin") {
+                window.location.replace("admin.html");
+            }
+            else if (session.role === "moderator") {
                 window.location.replace("index.html");
             }
             else {

@@ -1,56 +1,57 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ambil Antrean | Rumah Sakit</title>
+  <title>Ambil Antrean - Rumah Sakit</title>
   <link rel="stylesheet" href="index.css">
-  <script type="module" src="dist/ambil-antrian.js" defer></script>
-  <script type="module" src="dist/nav.js" defer></script>
+  <script type="module" src="dist/public-queue.js"></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="ambil-antrian.html">
-      <span class="brand-mark" aria-hidden="true">✚</span>
-      <span>Antrean Rumah Sakit</span>
-    </a>
-
-    <nav aria-label="Navigasi utama">
-      <a href="ambil-antrian.html" aria-current="page">Ambil Antrean</a>
+    <h1>Rumah Sakit</h1>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="ambil-antrian.html">Ambil Antrean</a>
       <a href="layar.html">Layar Antrean</a>
-      <a id="staffLink" href="login.html">Masuk Staf</a>
+      <a href="login.html">Login</a>
     </nav>
   </header>
 
   <main class="dashboard">
-    <div class="page-head">
-      <div>
-        <h2>Ambil nomor antrian</h2>
-        <p class="page-sub">Pilih jenis layanan untuk mengambil nomor antrian.</p>
-      </div>
-    </div>
+    <section class="card">
+      <h2>Ambil Nomor Antrean</h2>
+      <p>Isi data pasien untuk mendapatkan nomor antrean.</p>
 
-    <p id="takeMessage" class="form-message" role="status" aria-live="polite"></p>
+      <form id="publicQueueForm">
+        <label for="patientName">Nama Pasien</label>
+        <input
+          type="text"
+          id="patientName"
+          name="patientName"
+          placeholder="Masukkan nama pasien"
+          required
+        >
 
-    <!-- Tiket terakhir yang diambil di perangkat ini -->
-    <section id="ticketResult" class="ticket-result" aria-live="polite" hidden>
-      <div class="ticket-result-main">
-        <p class="ticket-result-label">Nomor antrean kamu</p>
-        <p id="ticketNumber" class="ticket-result-number">-</p>
-        <p id="ticketDetail" class="ticket-result-detail"></p>
-      </div>
-      <div class="ticket-result-side">
-        <span id="ticketStatus" class="badge">-</span>
-        <p id="ticketHint" class="queue-meta"></p>
-        <button id="ticketDismiss" type="button" class="btn btn-ghost btn-sm">Tutup</button>
+        <label for="queueType">Jenis Antrean</label>
+        <select id="queueType" name="queueType" required>
+          <option value="umum">Poli Umum</option>
+          <option value="gigi">Poli Gigi</option>
+          <option value="anak">Poli Anak</option>
+        </select>
+
+        <button type="submit">Ambil Antrean</button>
+      </form>
+
+      <p id="queueMessage" role="status" aria-live="polite"></p>
+
+      <div id="ticketResult" hidden>
+        <h3>Nomor Antrean Kamu</h3>
+        <p id="ticketNumber"></p>
+        <p>Silakan tunggu hingga nomor antrean dipanggil.</p>
       </div>
     </section>
-
-    <section id="serviceGrid" class="service-grid" aria-label="Daftar jenis antrian"></section>
-
-    <p class="footnote">
-      Jenis antrian baru muncul otomatis. Data diperbarui <span id="lastUpdated">-</span>
-    </p>
   </main>
 </body>
 </html>

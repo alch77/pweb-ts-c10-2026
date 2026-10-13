@@ -68,7 +68,7 @@ if (requireRole(["user"])) {
 
       const values = [
         ticket.queueNumber,
-        ticket.patientName ?? "-",
+        ticket.patientName,
         ticket.queueType,
         ticket.status,
       ];

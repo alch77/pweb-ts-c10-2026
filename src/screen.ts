@@ -1,7 +1,8 @@
 import { getTickets } from "./storage.js";
 import type { QueueType } from "./types.js";
 
-const table = document.querySelector<HTMLTableSectionElement>("#screenTable");
+const table =
+  document.querySelector<HTMLTableSectionElement>("#screenTable");
 
 const currentNumber: Record<QueueType, string> = {
   umum: "current-umum",
@@ -16,7 +17,9 @@ function renderScreen(): void {
     table.replaceChildren();
 
     const visibleTickets = tickets.filter(
-      (ticket) => ticket.status === "menunggu" || ticket.status === "dipanggil",
+      (ticket) =>
+        ticket.status === "menunggu" ||
+        ticket.status === "dipanggil"
     );
 
     if (visibleTickets.length === 0) {
@@ -35,7 +38,7 @@ function renderScreen(): void {
 
         const values = [
           ticket.queueNumber,
-          ticket.patientName ?? "-",
+          ticket.patientName,
           ticket.queueType,
           ticket.status,
         ];
@@ -62,17 +65,21 @@ function renderScreen(): void {
     const calledTicket = [...tickets]
       .reverse()
       .find(
-        (ticket) => ticket.queueType === type && ticket.status === "dipanggil",
+        (ticket) =>
+          ticket.queueType === type &&
+          ticket.status === "dipanggil"
       );
 
-    element.textContent = calledTicket ? calledTicket.queueNumber : "-";
+    element.textContent = calledTicket
+      ? calledTicket.queueNumber
+      : "-";
   });
 }
 
 renderScreen();
 
-// perbarui tampilan jika antrean berubah di tab browser lain
+// Perbarui tampilan jika antrean berubah di tab browser lain.
 window.addEventListener("storage", renderScreen);
 
-// perbarui secara berkala
+// Perbarui juga secara berkala.
 window.setInterval(renderScreen, 3000);

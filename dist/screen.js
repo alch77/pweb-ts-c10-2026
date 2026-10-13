@@ -9,7 +9,8 @@ function renderScreen() {
     const tickets = getTickets();
     if (table) {
         table.replaceChildren();
-        const visibleTickets = tickets.filter((ticket) => ticket.status === "menunggu" || ticket.status === "dipanggil");
+        const visibleTickets = tickets.filter((ticket) => ticket.status === "menunggu" ||
+            ticket.status === "dipanggil");
         if (visibleTickets.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
@@ -24,7 +25,7 @@ function renderScreen() {
                 const row = document.createElement("tr");
                 const values = [
                     ticket.queueNumber,
-                    ticket.patientName ?? "-",
+                    ticket.patientName,
                     ticket.queueType,
                     ticket.status,
                 ];
@@ -44,12 +45,15 @@ function renderScreen() {
             return;
         const calledTicket = [...tickets]
             .reverse()
-            .find((ticket) => ticket.queueType === type && ticket.status === "dipanggil");
-        element.textContent = calledTicket ? calledTicket.queueNumber : "-";
+            .find((ticket) => ticket.queueType === type &&
+            ticket.status === "dipanggil");
+        element.textContent = calledTicket
+            ? calledTicket.queueNumber
+            : "-";
     });
 }
 renderScreen();
-// perbarui tampilan jika antrean berubah di tab browser lain
+// Perbarui tampilan jika antrean berubah di tab browser lain.
 window.addEventListener("storage", renderScreen);
-// perbarui secara berkala
+// Perbarui juga secara berkala.
 window.setInterval(renderScreen, 3000);
