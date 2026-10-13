@@ -1,17 +1,4 @@
 import { getSession } from "./storage.js";
-function redirectByRole() {
-    const session = getSession();
-    if (!session || !session.token) {
-        window.location.replace("login.html");
-        return;
-    }
-    if (session.role === "user") {
-        window.location.replace("operator.html");
-    }
-    else {
-        window.location.replace("index.html");
-    }
-}
 export function requireAuth() {
     const session = getSession();
     if (!session || !session.token) {
@@ -26,8 +13,9 @@ export function requireRole(allowedRoles) {
         window.location.replace("login.html");
         return false;
     }
+    // Spek: belum login ATAU role tidak diizinkan -> paksa ke login.html.
     if (!allowedRoles.includes(session.role)) {
-        redirectByRole();
+        window.location.replace("login.html");
         return false;
     }
     return true;

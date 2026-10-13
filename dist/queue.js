@@ -1,126 +1,201 @@
-import { requireRole } from "./guards.js";
-import { getSession, getTickets, saveTickets, } from "./storage.js";
+import { requireAuth } from "./guards.js";
+import { getSession, getQueueMaster, getTickets } from "./storage.js";
 import { logout } from "./auth.js";
-if (requireRole(["user"])) {
+import { PRIORITY_LABEL, STATUS_LABEL, callNextTicket, compareTicketsByPriority, finishCurrentTicket, getCurrentCalled, getNextTicket, skipCurrentTicket, speakTicket, } from "./queue-service.js";
+import { el, formatClock, setMessage } from "./dom.js";
+// Auth Guard: semua role yang sudah login boleh membuka panel operator.
+if (requireAuth()) {
+    initOperatorPage();
+}
+function queueNameOf(code) {
+    return getQueueMaster().find((queue) => queue.code === code)?.name ?? code;
+}
+function initOperatorPage() {
     const session = getSession();
-    const form = document.querySelector("#queueForm");
-    const patientInput = document.querySelector("#patientName");
-    const queueTypeInput = document.querySelector("#queueType");
-    const message = document.querySelector("#queueMessage");
-    const table = document.querySelector("#ticketTable");
-    const welcome = document.querySelector("#welcomeMessage");
+    const userName = document.querySelector("#userName");
+    const userRole = document.querySelector("#userRole");
     const logoutButton = document.querySelector("#logoutButton");
-    if (welcome && session) {
-        welcome.textContent =
-            `Selamat datang, ${session.firstName}!`;
+    const dashboardLink = document.querySelector("#dashboardLink");
+    const welcome = document.querySelector("#welcomeMessage");
+    const currentNumber = document.querySelector("#currentNumber");
+    const currentDetail = document.querySelector("#currentDetail");
+    const nextNumber = document.querySelector("#nextNumber");
+    const nextDetail = document.querySelector("#nextDetail");
+    const waitingCount = document.querySelector("#waitingCount");
+    const message = document.querySelector("#operatorMessage");
+    const table = document.querySelector("#operatorTable");
+    const lastUpdated = document.querySelector("#lastUpdated");
+    const toast = document.querySelector("#toast");
+    const callNextButton = document.querySelector("#callNextButton");
+    const skipButton = document.querySelector("#skipButton");
+    const finishButton = document.querySelector("#finishButton");
+    const soundButton = document.querySelector("#soundButton");
+    if (!currentNumber || !table || !callNextButton || !skipButton || !finishButton) {
+        console.error("Elemen halaman operator tidak lengkap.");
+        return;
+    }
+    const currentNumberEl = currentNumber;
+    const tableEl = table;
+    const callNextEl = callNextButton;
+    const skipEl = skipButton;
+    const finishEl = finishButton;
+    if (session) {
+        if (userName)
+            userName.textContent = session.firstName;
+        if (userRole)
+            userRole.textContent = session.role;
+        if (welcome)
+            welcome.textContent = `Halo, ${session.firstName}! Kelola pemanggilan.`;
+        // User biasa tidak punya akses dashboard admin: sembunyikan tautannya.
+        if (session.role === "user" && dashboardLink) {
+            dashboardLink.hidden = true;
+        }
     }
     logoutButton?.addEventListener("click", logout);
-    function renderTickets() {
-        if (!table)
+    let soundOn = true;
+    let toastTimer;
+    function showToast(text) {
+        if (!toast)
             return;
+        toast.textContent = text;
+        toast.hidden = false;
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+            toast.hidden = true;
+        }, 3200);
+    }
+    function speakIfEnabled(ticket) {
+        if (!soundOn || !ticket)
+            return;
+        speakTicket(ticket, queueNameOf(ticket.queueType));
+    }
+    function render() {
         const tickets = getTickets();
-        table.replaceChildren();
-        if (tickets.length === 0) {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-            cell.colSpan = 5;
-            cell.textContent = "Belum ada antrean.";
-            cell.style.padding = "12px";
-            row.appendChild(cell);
-            table.appendChild(row);
+        const current = getCurrentCalled(tickets);
+        const next = getNextTicket(tickets);
+        const waiting = tickets.filter((ticket) => ticket.status === "menunggu");
+        if (current) {
+            currentNumberEl.textContent = current.queueNumber;
+            if (currentDetail) {
+                currentDetail.textContent = `${queueNameOf(current.queueType)} · ${PRIORITY_LABEL[current.priority]}`;
+            }
+        }
+        else {
+            currentNumberEl.textContent = "-";
+            if (currentDetail)
+                currentDetail.textContent = "Belum ada tiket dipanggil.";
+        }
+        if (next) {
+            if (nextNumber) {
+                nextNumber.textContent = next.queueNumber;
+            }
+            if (nextDetail) {
+                nextDetail.textContent = `${queueNameOf(next.queueType)} · ${PRIORITY_LABEL[next.priority]}`;
+            }
+        }
+        else {
+            if (nextNumber)
+                nextNumber.textContent = "-";
+            if (nextDetail)
+                nextDetail.textContent = "Antrean kosong.";
+        }
+        if (waitingCount)
+            waitingCount.textContent = String(waiting.length);
+        skipEl.disabled = !current;
+        finishEl.disabled = !current;
+        callNextEl.disabled = !current && !next;
+        renderTable(tickets);
+        if (lastUpdated)
+            lastUpdated.textContent = `Diperbarui ${formatClock()}`;
+    }
+    function renderTable(tickets) {
+        tableEl.replaceChildren();
+        const visible = [...tickets].sort((a, b) => {
+            // Dipanggil paling atas, lalu menunggu urut prioritas, sisanya kronologis.
+            if (a.status === "dipanggil" && b.status !== "dipanggil")
+                return -1;
+            if (b.status === "dipanggil" && a.status !== "dipanggil")
+                return 1;
+            if (a.status === "menunggu" && b.status === "menunggu") {
+                return compareTicketsByPriority(a, b);
+            }
+            return b.createdAt.localeCompare(a.createdAt);
+        }).slice(0, 30);
+        if (visible.length === 0) {
+            const row = el("tr", {}, [
+                el("td", { text: "Belum ada antrean.", attrs: { colspan: "4" } }),
+            ]);
+            tableEl.append(row);
             return;
         }
-        tickets.forEach((ticket) => {
-            const row = document.createElement("tr");
-            const values = [
-                ticket.queueNumber,
-                ticket.patientName ?? "-",
-                ticket.queueType,
-                ticket.status,
-            ];
-            values.forEach((value) => {
-                const cell = document.createElement("td");
-                cell.textContent = value;
-                cell.style.padding = "12px";
-                row.appendChild(cell);
-            });
-            const actionCell = document.createElement("td");
-            actionCell.style.padding = "12px";
-            const statusButton = document.createElement("button");
-            statusButton.type = "button";
-            if (ticket.status === "menunggu") {
-                statusButton.textContent = "Panggil";
-            }
-            else if (ticket.status === "dipanggil") {
-                statusButton.textContent = "Selesaikan";
-            }
-            else {
-                statusButton.textContent = "Reset";
-            }
-            statusButton.addEventListener("click", () => {
-                updateTicketStatus(ticket);
-            });
-            actionCell.appendChild(statusButton);
-            row.appendChild(actionCell);
-            table.appendChild(row);
+        visible.forEach((ticket) => {
+            const row = el("tr", {}, [
+                el("td", {}, [el("strong", { text: ticket.queueNumber })]),
+                el("td", { text: queueNameOf(ticket.queueType) }),
+                el("td", {}, [
+                    el("span", {
+                        class: `badge badge-${ticket.priority}`,
+                        text: PRIORITY_LABEL[ticket.priority],
+                    }),
+                ]),
+                el("td", {}, [
+                    el("span", {
+                        class: `badge status-${ticket.status}`,
+                        text: STATUS_LABEL[ticket.status],
+                    }),
+                ]),
+            ]);
+            tableEl.append(row);
         });
     }
-    function updateTicketStatus(ticket) {
-        const tickets = getTickets();
-        const current = tickets.find((item) => item.id === ticket.id);
-        if (!current)
-            return;
-        const nextStatus = {
-            menunggu: "dipanggil",
-            dipanggil: "selesai",
-            selesai: "menunggu",
-            dibatalkan: "menunggu",
-            dilewati: "menunggu",
-        };
-        current.status = nextStatus[current.status];
-        saveTickets(tickets);
-        renderTickets();
-    }
-    form?.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!patientInput || !queueTypeInput || !message) {
+    callNextEl.addEventListener("click", () => {
+        const result = callNextTicket();
+        if (!result.ok) {
+            setMessage(message, result.error, "error");
             return;
         }
-        const patientName = patientInput.value.trim();
-        const queueType = queueTypeInput.value;
-        message.textContent = "";
-        if (!patientName) {
-            message.textContent = "Nama pasien wajib diisi.";
-            return;
+        speakIfEnabled(result.data.called);
+        if (result.data.called) {
+            const done = result.data.finished
+                ? ` ${result.data.finished.queueNumber} diselesaikan.`
+                : "";
+            setMessage(message, `Memanggil ${result.data.called.queueNumber}.${done}`, "success");
+            showToast(`Memanggil ${result.data.called.queueNumber}`);
         }
-        const prefix = {
-            umum: "U",
-            gigi: "G",
-            anak: "A",
-        };
-        const date = new Date()
-            .toISOString()
-            .slice(0, 10)
-            .replace(/-/g, "");
-        const todayPrefix = `${prefix[queueType]}-${date}`;
-        const tickets = getTickets();
-        const todayTickets = tickets.filter((ticket) => ticket.queueNumber.startsWith(todayPrefix));
-        const queueNumber = `${todayPrefix}-${String(todayTickets.length + 1).padStart(3, "0")}`;
-        const newTicket = {
-            id: crypto.randomUUID(),
-            queueNumber,
-            queueType,
-            patientName,
-            priority: "normal",
-            status: "menunggu",
-            createdAt: new Date().toISOString(),
-        };
-        tickets.push(newTicket);
-        saveTickets(tickets);
-        message.textContent =
-            `Antrean berhasil ditambahkan: ${queueNumber}`;
-        form.reset();
-        renderTickets();
+        else {
+            setMessage(message, `${result.data.finished?.queueNumber ?? "Tiket"} diselesaikan. Antrean kosong.`, "success");
+        }
+        render();
     });
-    renderTickets();
+    skipEl.addEventListener("click", () => {
+        const result = skipCurrentTicket();
+        if (!result.ok) {
+            setMessage(message, result.error, "error");
+            return;
+        }
+        speakIfEnabled(result.data.called);
+        setMessage(message, result.data.called
+            ? `${result.data.skipped.queueNumber} dilewati. Memanggil ${result.data.called.queueNumber}.`
+            : `${result.data.skipped.queueNumber} dilewati. Antrean kosong.`, "success");
+        showToast(`${result.data.skipped.queueNumber} dilewati.`);
+        render();
+    });
+    finishEl.addEventListener("click", () => {
+        const result = finishCurrentTicket();
+        if (!result.ok) {
+            setMessage(message, result.error, "error");
+            return;
+        }
+        setMessage(message, `${result.data.queueNumber} selesai.`, "success");
+        showToast(`${result.data.queueNumber} selesai.`);
+        render();
+    });
+    soundButton?.addEventListener("click", () => {
+        soundOn = !soundOn;
+        soundButton.textContent = soundOn ? "Suara: Aktif" : "Suara: Mati";
+        soundButton.setAttribute("aria-pressed", String(soundOn));
+    });
+    window.addEventListener("storage", render);
+    window.setInterval(render, 2500);
+    render();
 }

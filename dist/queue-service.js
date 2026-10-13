@@ -19,6 +19,34 @@ export const STATUS_LABEL = {
     dibatalkan: "Dibatalkan",
     dilewati: "Dilewati",
 };
+// Urutan prioritas: VIP / Disabilitas / Lansia didahulukan atas Normal.
+// Nilai lebih kecil = dipanggil lebih dulu.
+export const PRIORITY_RANK = {
+    vip: 0,
+    disabilitas: 1,
+    lansia: 2,
+    normal: 3,
+};
+export function compareTicketsByPriority(a, b) {
+    const rank = PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
+    if (rank !== 0)
+        return rank;
+    return a.createdAt.localeCompare(b.createdAt);
+}
+/** Tiket menunggu terurut prioritas (VIP > Disabilitas > Lansia > Normal, lalu FIFO). */
+export function getWaitingSorted(tickets) {
+    return tickets
+        .filter((ticket) => ticket.status === "menunggu")
+        .sort(compareTicketsByPriority);
+}
+/** Tiket berikutnya yang layak dipanggil (null bila antrean kosong). */
+export function getNextTicket(tickets) {
+    return getWaitingSorted(tickets)[0] ?? null;
+}
+/** Tiket yang sedang dipanggil (ambil yang terbaru bila data lama berisi >1). */
+export function getCurrentCalled(tickets) {
+    return [...tickets].reverse().find((ticket) => ticket.status === "dipanggil") ?? null;
+}
 function fail(error) {
     return { ok: false, error };
 }
@@ -44,7 +72,7 @@ function createId() {
     }
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
-// CRUD jenis antrian
+// CRUD jenis antrean
 export function addQueueType(codeInput, nameInput) {
     const code = codeInput.trim();
     const name = normalizeName(nameInput);
@@ -61,11 +89,11 @@ export function addQueueType(codeInput, nameInput) {
     // cek duplikasi, ga bedain huruf besar/kecil
     const codeTaken = queues.some((queue) => queue.code.toUpperCase() === code.toUpperCase());
     if (codeTaken) {
-        return fail(`Kode "${code}" sudah dipakai jenis antrian lain.`);
+        return fail(`Kode "${code}" sudah dipakai jenis antrean lain.`);
     }
     const nameTaken = queues.some((queue) => normalizeName(queue.name).toLowerCase() === name.toLowerCase());
     if (nameTaken) {
-        return fail(`Nama "${name}" sudah dipakai jenis antrian lain.`);
+        return fail(`Nama "${name}" sudah dipakai jenis antrean lain.`);
     }
     const created = { code, name, isActive: true };
     saveQueueMaster([...queues, created]);
@@ -75,18 +103,18 @@ export function toggleQueueType(code) {
     const queues = getQueueMaster();
     const target = queues.find((queue) => queue.code === code);
     if (!target) {
-        return fail("Jenis antrian tidak ditemukan.");
+        return fail("Jenis antrean tidak ditemukan.");
     }
     target.isActive = !target.isActive;
     saveQueueMaster(queues);
     return succeed(target);
 }
-// hapus jenis antrian beserta tiket dan counter miliknya
+// hapus jenis antrean beserta tiket dan counter miliknya
 export function deleteQueueType(code) {
     const queues = getQueueMaster();
     const target = queues.find((queue) => queue.code === code);
     if (!target) {
-        return fail("Jenis antrian tidak ditemukan.");
+        return fail("Jenis antrean tidak ditemukan.");
     }
     saveQueueMaster(queues.filter((queue) => queue.code !== code));
     saveTickets(getTickets().filter((ticket) => ticket.queueType !== code));
@@ -105,10 +133,10 @@ export function resetQueues() {
 export function issueTicket(code, priority) {
     const queue = getQueueMaster().find((item) => item.code === code);
     if (!queue) {
-        return fail("Jenis antrian tidak ditemukan.");
+        return fail("Jenis antrean tidak ditemukan.");
     }
     if (!queue.isActive) {
-        return fail(`Jenis antrian ${queue.name} sedang nonaktif.`);
+        return fail(`Jenis antrean ${queue.name} sedang nonaktif.`);
     }
     if (!isPriority(priority)) {
         return fail("Tingkat prioritas tidak valid.");
@@ -135,4 +163,75 @@ export function issueTicket(code, priority) {
     saveCounters(counters);
     saveTickets([...tickets, ticket]);
     return succeed(ticket);
+}
+// ---- Aksi operator (dipanggil / dilewati / selesai) ----
+/**
+ * Panggil Berikutnya: tiket aktif sebelumnya menjadi Selesai,
+ * lalu tiket menunggu teratas (urut prioritas) menjadi Dipanggil.
+ */
+export function callNextTicket() {
+    const tickets = getTickets();
+    const current = getCurrentCalled(tickets);
+    let finished = null;
+    if (current) {
+        current.status = "selesai";
+        finished = { ...current };
+    }
+    const next = getNextTicket(tickets);
+    if (next) {
+        next.status = "dipanggil";
+        saveTickets(tickets);
+        return succeed({ finished, called: { ...next } });
+    }
+    saveTickets(tickets);
+    if (!finished) {
+        return fail("Tidak ada tiket menunggu untuk dipanggil.");
+    }
+    return succeed({ finished, called: null });
+}
+/**
+ * Lewati: tiket aktif menjadi Dilewati, lalu otomatis memanggil
+ * tiket menunggu berikutnya (jika ada).
+ */
+export function skipCurrentTicket() {
+    const tickets = getTickets();
+    const current = getCurrentCalled(tickets);
+    if (!current) {
+        return fail("Tidak ada tiket yang sedang dipanggil.");
+    }
+    current.status = "dilewati";
+    const skipped = { ...current };
+    const next = getNextTicket(tickets);
+    if (next) {
+        next.status = "dipanggil";
+    }
+    saveTickets(tickets);
+    return succeed({ skipped, called: next ? { ...next } : null });
+}
+/** Selesai: menutup tiket aktif tanpa otomatis memanggil berikutnya. */
+export function finishCurrentTicket() {
+    const tickets = getTickets();
+    const current = getCurrentCalled(tickets);
+    if (!current) {
+        return fail("Tidak ada tiket yang sedang dipanggil.");
+    }
+    current.status = "selesai";
+    saveTickets(tickets);
+    return succeed({ ...current });
+}
+/** Respon suara panggilan antrean (Web Speech API, aman bila tak didukung). */
+export function speakTicket(ticket, queueName) {
+    try {
+        if (!("speechSynthesis" in window))
+            return;
+        window.speechSynthesis.cancel();
+        const spoken = ticket.queueNumber.replace("-", " ");
+        const utterance = new SpeechSynthesisUtterance(`Nomor antrean ${spoken}. ${queueName}. Silakan menuju loket.`);
+        utterance.lang = "id-ID";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+    }
+    catch {
+        // Abaikan: audio hanya bonus, bukan alur utama.
+    }
 }

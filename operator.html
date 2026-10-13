@@ -1,72 +1,86 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Operator Antrean | Rumah Sakit</title>
+  <title>Operator Antrean | Antrean Rumah Sakit</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="index.css">
-  <script type="module" src="dist/queue.js"></script>
+  <script type="module" src="dist/queue.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <h1>Operator Antrean</h1>
-    <button id="logoutButton" type="button">Logout</button>
+    <a class="brand" href="operator.html">
+      <span class="brand-mark" aria-hidden="true">✚</span>
+      <span>Antrean Rumah Sakit</span>
+    </a>
+
+    <nav aria-label="Navigasi utama">
+      <a id="dashboardLink" href="index.html">Dashboard</a>
+      <a href="operator.html" aria-current="page">Operator</a>
+      <a href="layar.html">Layar Antrean</a>
+      <a href="ambil-antrian.html">Ambil Antrean</a>
+    </nav>
+
+    <div class="user-area">
+      <div class="user-chip">
+        <span id="userName" class="user-name">-</span>
+        <span id="userRole" class="role-badge">-</span>
+      </div>
+      <button id="logoutButton" type="button" class="btn btn-ghost btn-sm">Logout</button>
+    </div>
   </header>
 
   <main class="dashboard">
-    <section class="welcome-card">
-      <p class="eyebrow">LAYANAN PASIEN</p>
-      <h2 id="welcomeMessage">Kelola Antrean Pasien</h2>
-      <p>Tambahkan pasien dan perbarui status antrean.</p>
-    </section>
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">PANEL OPERATOR</p>
+        <h2 id="welcomeMessage">Pemanggilan Antrean</h2>
+        <p class="page-sub">Prioritas: VIP &gt; Disabilitas &gt; Lansia &gt; Normal, lalu FIFO. <span id="lastUpdated">-</span></p>
+      </div>
+      <button id="soundButton" type="button" class="btn btn-ghost" aria-pressed="true">Suara: Aktif</button>
+    </div>
 
-    <section class="menu-card" style="margin-top: 24px;">
-      <h3>Ambil Nomor Antrean</h3>
+    <p id="operatorMessage" class="form-message" role="status" aria-live="polite"></p>
 
-      <form id="queueForm">
-        <label for="patientName">Nama pasien</label>
-        <input
-          id="patientName"
-          type="text"
-          placeholder="Masukkan nama pasien"
-          required
-        >
+    <div class="admin-grid">
+      <section class="panel" aria-labelledby="currentTitle">
+        <h3 id="currentTitle">Sedang dipanggil</h3>
+        <p id="currentNumber" class="ticket-result-number">-</p>
+        <p id="currentDetail" class="queue-meta">Belum ada tiket dipanggil.</p>
+        <div class="queue-actions" style="margin-top: 14px; flex-wrap: wrap;">
+          <button id="callNextButton" type="button" class="btn">Panggil Berikutnya</button>
+          <button id="skipButton" type="button" class="btn btn-ghost">Lewati</button>
+          <button id="finishButton" type="button" class="btn btn-danger">Selesai</button>
+        </div>
+      </section>
 
-        <label for="queueType">Jenis layanan</label>
-        <select id="queueType" required>
-          <option value="umum">Poli Umum</option>
-          <option value="gigi">Poli Gigi</option>
-          <option value="anak">Poli Anak</option>
-        </select>
+      <section class="panel" aria-labelledby="nextTitle">
+        <h3 id="nextTitle">Berikutnya</h3>
+        <p id="nextNumber" class="ticket-result-number">-</p>
+        <p id="nextDetail" class="queue-meta">Antrean kosong.</p>
+        <p class="queue-meta"><span id="waitingCount">0</span> tiket menunggu.</p>
+      </section>
+    </div>
 
-        <button type="submit">Tambah Antrean</button>
-        <p id="queueMessage" role="status"></p>
-      </form>
-    </section>
-
-    <section class="menu-card" style="margin-top: 24px;">
-      <h3>Daftar Antrean</h3>
-
+    <section class="panel" style="margin-top: 22px;" aria-labelledby="listTitle">
+      <h3 id="listTitle">Daftar antrean (urut prioritas)</h3>
       <div style="overflow-x: auto;">
         <table style="width: 100%; text-align: left; border-collapse: collapse;">
           <thead>
             <tr>
               <th style="padding: 12px;">Nomor</th>
-              <th style="padding: 12px;">Pasien</th>
               <th style="padding: 12px;">Layanan</th>
+              <th style="padding: 12px;">Prioritas</th>
               <th style="padding: 12px;">Status</th>
-              <th style="padding: 12px;">Aksi</th>
             </tr>
           </thead>
-          <tbody id="ticketTable"></tbody>
+          <tbody id="operatorTable"></tbody>
         </table>
       </div>
     </section>
-
-    <p style="margin-top: 24px;">
-      <a href="index.html">Kembali ke Dashboard</a>
-    </p>
   </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

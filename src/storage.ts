@@ -83,7 +83,7 @@ export function getTickets(): Ticket[] {
   return Array.isArray(data) ? (data as Ticket[]) : [];
 }
 
-// counter nomor tiket per jenis antrian
+// counter nomor tiket per jenis antrean
 export function saveCounters(counters: QueueCounterMap): void {
   writeJSON(COUNTER_KEY, counters);
 }

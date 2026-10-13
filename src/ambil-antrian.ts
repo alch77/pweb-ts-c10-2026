@@ -32,7 +32,7 @@ const waitingLabels = new Map<string, HTMLElement>();
 // kartu yang prioritasnya sedang dipertahankan saat render ulang
 const openMenus = new Set<string>();
 
-// kartu jenis antrian
+// kartu jenis antrean
 function createCard(queue: QueueMaster): HTMLElement {
   const takeButton = el("button", {
     class: "btn btn-block",
@@ -108,7 +108,7 @@ function renderCards(queues: QueueMaster[]): void {
     serviceGrid.append(
       el("p", {
         class: "empty-state",
-        text: "Belum ada jenis antrian. Silakan hubungi petugas.",
+        text: "Belum ada jenis antrean. Silakan hubungi petugas.",
       }),
     );
     return;
@@ -223,7 +223,7 @@ ticketDismiss?.addEventListener("click", () => {
   renderLastTicket();
 });
 
-// jenis antrian baru dari dashboard admin (muncul otomatis)
+// jenis antrean baru dari dashboard admin (muncul otomatis)
 window.addEventListener("storage", refresh);
 window.setInterval(refresh, 2500);
 

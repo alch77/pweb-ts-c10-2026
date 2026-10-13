@@ -1,60 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Layar Antrean | Rumah Sakit</title>
+  <title>Layar Antrean | Antrean Rumah Sakit</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="index.css">
-  <script type="module" src="dist/screen.js"></script>
+  <script type="module" src="dist/screen.js" defer></script>
   <script type="module" src="dist/nav.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <h1>Layar Antrean Rumah Sakit</h1>
+    <a class="brand" href="layar.html">
+      <span class="brand-mark" aria-hidden="true">✚</span>
+      <span>Antrean Rumah Sakit</span>
+    </a>
+
     <nav aria-label="Navigasi utama">
       <a href="ambil-antrian.html">Ambil Antrean</a>
+      <a href="layar.html" aria-current="page">Layar Antrean</a>
       <a id="staffLink" href="login.html">Masuk Staf</a>
     </nav>
   </header>
 
   <main class="dashboard">
     <section class="welcome-card">
-      <p class="eyebrow">INFORMASI LAYANAN</p>
+      <p class="eyebrow">INFORMASI LAYANAN · <span id="lastUpdated">-</span></p>
       <h2>Antrean Pasien</h2>
       <p>Silakan menunggu sampai nomor antrean kamu dipanggil.</p>
+      <div class="queue-actions" style="margin-top: 14px; flex-wrap: wrap;">
+        <button id="soundButton" type="button" class="btn btn-ghost btn-sm" aria-pressed="true">Suara: Aktif</button>
+        <button id="fullscreenButton" type="button" class="btn btn-ghost btn-sm">Layar Penuh</button>
+      </div>
     </section>
 
-    <section class="menu-grid">
-      <article class="menu-card">
-        <h3>Poli Umum</h3>
-        <p>Nomor dipanggil</p>
-        <h2 id="current-umum">-</h2>
-      </article>
-
-      <article class="menu-card">
-        <h3>Poli Gigi</h3>
-        <p>Nomor dipanggil</p>
-        <h2 id="current-gigi">-</h2>
-      </article>
-
-      <article class="menu-card">
-        <h3>Poli Anak</h3>
-        <p>Nomor dipanggil</p>
-        <h2 id="current-anak">-</h2>
-      </article>
-    </section>
+    <section id="screenGrid" class="menu-grid" aria-label="Status per jenis antrean"></section>
 
     <section class="menu-card" style="margin-top: 24px;">
-      <h3>Daftar Antrean</h3>
-
+      <h3>Sedang dipanggil &amp; menunggu</h3>
       <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr>
               <th style="padding: 12px;">Nomor</th>
-              <th style="padding: 12px;">Pasien</th>
               <th style="padding: 12px;">Layanan</th>
+              <th style="padding: 12px;">Prioritas</th>
               <th style="padding: 12px;">Status</th>
             </tr>
           </thead>

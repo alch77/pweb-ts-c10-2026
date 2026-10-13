@@ -59,7 +59,7 @@ export function getTickets() {
     const data = readJSON(TICKET_KEY, []);
     return Array.isArray(data) ? data : [];
 }
-// counter nomor tiket per jenis antrian
+// counter nomor tiket per jenis antrean
 export function saveCounters(counters) {
     writeJSON(COUNTER_KEY, counters);
 }

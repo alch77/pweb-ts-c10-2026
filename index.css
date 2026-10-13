@@ -1,27 +1,31 @@
 :root {
-  --ink: #705675;
-  --ink-strong: #795e80;
-  --heading: #a765a6;
-  --heading-soft: #ad70ad;
-  --muted: #9c86a4;
+  --ink: #334155;
+  --ink-strong: #172033;
+  --heading: #0f766e;
+  --heading-soft: #0b5f58;
+  --muted: #64748b;
 
-  --line: #efdaf2;
-  --line-input: #ead7ed;
-  --surface: #fffaff;
+  --line: #e2e8f0;
+  --line-input: #cbd5e1;
+  --surface: #ffffff;
+  --canvas: #f3f7f8;
 
-  --pink: #e69acb;
-  --lilac: #c1a5f3;
-  --violet: #b59ae9;
+  --amber: #f59e0b;
+  --amber-dark: #d97706;
+  --amber-soft: #fffbeb;
+  --teal: #0f766e;
+  --teal-dark: #115e59;
 
-  --danger: #c85f85;
-  --danger-bg: #fff0f5;
-  --danger-line: #f3cadc;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-line: #fecaca;
 
-  --ok: #3d8c5e;
-  --ok-bg: #e8f7ee;
+  --ok: #059669;
+  --ok-bg: #ecfdf5;
 
-  --shadow: 0 25px 65px #b78ac535, 0 8px 25px #e8b9df30;
-  --shadow-soft: 0 10px 30px #b78ac51f;
+  --shadow: 0 1px 3px 0 #1720330d, 0 1px 2px -1px #1720330d;
+  --shadow-soft: 0 1px 3px 0 #1720330d, 0 1px 2px -1px #1720330d;
+  --shadow-lift: 0 4px 6px -1px #17203314, 0 2px 4px -2px #1720330f;
 }
 
 * {
@@ -35,13 +39,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 10% 15%, #ffcde8 0, transparent 32%),
-    radial-gradient(circle at 90% 85%, #d9ccff 0, transparent 35%),
-    linear-gradient(135deg, #fff7fc, #f5efff, #ffeff8);
-  background-attachment: fixed;
+  background: var(--canvas);
 }
 
 /* ------------------------------ Topbar ------------------------------ */
@@ -53,10 +53,10 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px 24px;
-  padding: 20px 5% 22px;
-  background: #ffffffd9;
-  border-radius: 0 0 28px 28px;
-  box-shadow: 0 12px 35px #b78ac524;
+  padding: 16px 5% 18px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .topbar::before {
@@ -65,13 +65,13 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 7px;
-  background: linear-gradient(90deg, #ffbfe3, #d8b5ff, #f8c6eb, #c9b6ff);
+  height: 4px;
+  background: linear-gradient(90deg, var(--amber), var(--teal));
 }
 
 .topbar h1 {
   margin: 0;
-  color: var(--heading);
+  color: var(--ink-strong);
   font-size: 22px;
   letter-spacing: -0.4px;
 }
@@ -80,7 +80,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: var(--heading);
+  color: var(--ink-strong);
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.4px;
@@ -92,15 +92,12 @@ body {
   place-items: center;
   width: 42px;
   height: 42px;
-  border: 3px solid #ffffff;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffd8ed, #e1d5ff, #f8dafa);
-  color: var(--heading-soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--amber-soft);
+  color: var(--amber-dark);
   font-size: 18px;
-  box-shadow:
-    0 6px 16px #d9a9e64d,
-    0 0 0 4px #fdf1fc;
-  transform: rotate(-6deg);
+  box-shadow: var(--shadow);
 }
 
 .topbar nav {
@@ -112,8 +109,8 @@ body {
 .topbar nav a,
 .topbar > a:not(.brand) {
   padding: 8px 14px;
-  border-radius: 12px;
-  color: var(--ink-strong);
+  border-radius: 8px;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -124,14 +121,14 @@ body {
 
 .topbar nav a:hover,
 .topbar > a:not(.brand):hover {
-  background: #f6e8fa;
-  color: var(--heading);
+  background: #f1f5f9;
+  color: var(--ink-strong);
 }
 
 .topbar nav a[aria-current="page"] {
-  background: linear-gradient(120deg, #fff0f8, #f2edff);
-  color: var(--heading);
-  box-shadow: inset 0 0 0 1px var(--line);
+  background: #f0fdfa;
+  color: var(--teal-dark);
+  box-shadow: inset 0 0 0 1px #99f6e4;
 }
 
 .user-area {
@@ -159,7 +156,7 @@ body {
 .role-badge {
   padding: 3px 10px;
   border-radius: 999px;
-  background: linear-gradient(110deg, #f6c3e2, #cdbbf6);
+  background: var(--teal);
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
@@ -184,7 +181,7 @@ body {
 
 .page-head h2 {
   margin: 0 0 6px;
-  color: var(--heading);
+  color: var(--ink-strong);
   font-size: 28px;
   letter-spacing: -0.6px;
 }
@@ -202,6 +199,50 @@ body {
   align-items: start;
 }
 
+/* ------------------------------ KPI strip ------------------------------ */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.kpi-card {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.kpi-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi-value {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-value.is-amber {
+  color: var(--amber-dark);
+}
+
+.kpi-value.is-teal {
+  color: var(--teal-dark);
+}
+
 /* ------------------------------ Kartu ------------------------------ */
 
 .card,
@@ -213,11 +254,9 @@ body {
   margin-bottom: 20px;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 100% 0%, #fce3f5 0, transparent 22%),
-    radial-gradient(circle at 0% 100%, #eee5ff 0, transparent 24%), #ffffff;
-  box-shadow: var(--shadow-soft);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
 }
 
 .admin-grid .panel {
@@ -228,19 +267,23 @@ body {
 .card h3,
 .menu-card h3 {
   margin: 0 0 18px;
-  color: var(--heading);
+  color: var(--ink-strong);
   font-size: 19px;
   letter-spacing: -0.3px;
 }
 
 .card h2 {
   margin-top: 0;
-  color: var(--heading);
+  color: var(--ink-strong);
+}
+
+.welcome-card {
+  border-top: 4px solid var(--amber);
 }
 
 .welcome-card h2 {
   margin-top: 0;
-  color: var(--heading);
+  color: var(--ink-strong);
 }
 
 .eyebrow {
@@ -265,11 +308,11 @@ body {
 
 .menu-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lift);
 }
 
 .menu-card a {
-  color: var(--heading);
+  color: var(--teal-dark);
   font-weight: 600;
   text-decoration: none;
 }
@@ -300,33 +343,32 @@ select {
   width: 100%;
   padding: 13px 15px;
   margin-bottom: 18px;
-  border: 1.5px solid var(--line-input);
-  border-radius: 15px;
+  border: 1px solid var(--line-input);
+  border-radius: 8px;
   outline: none;
-  background: linear-gradient(135deg, #fffaff, #fcf6ff);
-  color: var(--ink);
+  background: #ffffff;
+  color: var(--ink-strong);
   font: inherit;
   font-size: 14px;
-  box-shadow: inset 0 2px 5px #c9a2ce0a;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
 input::placeholder {
-  color: #c0a9c7;
+  color: #94a3b8;
 }
 
 input:hover,
 select:hover {
-  border-color: #d5a0dc;
+  border-color: #94a3b8;
 }
 
 input:focus,
 select:focus {
-  border-color: #bd8bce;
+  border-color: var(--teal);
   background: #ffffff;
-  box-shadow: 0 0 0 4px #f4e5fa;
+  box-shadow: 0 0 0 3px #0f766e26;
 }
 
 /* Form satu baris: field + tombol sejajar (admin) */
@@ -375,17 +417,17 @@ select:focus {
 .form-message.error {
   padding: 11px 14px;
   border: 1px solid var(--danger-line);
-  border-radius: 14px;
+  border-radius: 8px;
   background: var(--danger-bg);
   color: var(--danger);
 }
 
 .form-message.success {
   padding: 11px 14px;
-  border: 1px solid #cfe9d9;
-  border-radius: 14px;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
   background: var(--ok-bg);
-  color: var(--ok);
+  color: #065f46;
 }
 
 /* ------------------------------ Tombol ------------------------------ */
@@ -394,15 +436,15 @@ button,
 .btn {
   position: relative;
   padding: 12px 20px;
-  border: 1px solid #ffffff80;
-  border-radius: 14px;
-  background: linear-gradient(110deg, var(--pink), var(--lilac), var(--violet));
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--amber);
   color: #ffffff;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 20px #c29bdb4d;
+  box-shadow: var(--shadow);
   transition:
     box-shadow 0.25s ease,
     transform 0.25s ease,
@@ -411,8 +453,8 @@ button,
 
 button:hover,
 .btn:hover {
-  background: linear-gradient(110deg, #d782bd, #ad91e7);
-  box-shadow: 0 12px 26px #b28bd96b;
+  background: var(--amber-dark);
+  box-shadow: var(--shadow-lift);
   transform: translateY(-2px);
 }
 
@@ -425,13 +467,15 @@ button:focus-visible,
 .btn:focus-visible,
 summary:focus-visible,
 a:focus-visible {
-  outline: 2px solid #d5a0dc;
+  outline: 2px solid var(--teal);
   outline-offset: 2px;
 }
 
 button:disabled,
 .btn:disabled {
-  opacity: 0.55;
+  background: #e2e8f0;
+  color: var(--muted);
+  opacity: 1;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -446,7 +490,7 @@ button:disabled,
 
 .btn-sm {
   padding: 7px 13px;
-  border-radius: 11px;
+  border-radius: 8px;
   font-size: 13px;
   box-shadow: none;
 }
@@ -454,25 +498,25 @@ button:disabled,
 .btn-ghost {
   border: 1px solid var(--line-input);
   background: #ffffff;
-  color: var(--ink-strong);
+  color: var(--teal-dark);
   box-shadow: none;
 }
 
 .btn-ghost:hover {
-  border-color: #d5a0dc;
-  background: #fbf2fd;
+  border-color: var(--teal);
+  background: #f0fdfa;
   box-shadow: none;
 }
 
 .btn-danger {
-  border: 1px solid var(--danger-line);
-  background: var(--danger-bg);
+  border: 1px solid transparent;
+  background: transparent;
   color: var(--danger);
   box-shadow: none;
 }
 
 .btn-danger:hover {
-  background: #ffe3ec;
+  background: var(--danger-bg);
   box-shadow: none;
 }
 
@@ -480,7 +524,7 @@ button:disabled,
   min-width: 96px;
 }
 
-/* ----------------------- Daftar jenis antrian ----------------------- */
+/* ----------------------- Daftar jenis antrean ----------------------- */
 
 .queue-list {
   display: grid;
@@ -497,12 +541,12 @@ button:disabled,
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: linear-gradient(120deg, #fffafd, #faf6ff);
+  border-radius: 12px;
+  background: #ffffff;
 }
 
 .queue-item.is-inactive {
-  background: #faf7fb;
+  background: #f8fafc;
 }
 
 .queue-item.is-inactive .queue-title strong {
@@ -545,9 +589,9 @@ button:disabled,
   min-width: 24px;
   height: 22px;
   padding: 0 7px;
-  border-radius: 8px;
-  background: #f3e8fa;
-  color: var(--heading-soft);
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: var(--ink-strong);
   font-size: 12px;
   font-weight: 700;
 }
@@ -556,7 +600,7 @@ button:disabled,
   margin: 8px 0 0;
   padding: 18px;
   border: 1px dashed var(--line-input);
-  border-radius: 16px;
+  border-radius: 12px;
   color: var(--muted);
   font-size: 13px;
   text-align: center;
@@ -588,14 +632,15 @@ button:disabled,
   gap: 8px;
   padding: 9px 12px;
   margin-bottom: 6px;
-  border-radius: 12px;
-  background: var(--surface);
+  border-radius: 8px;
+  background: #f8fafc;
 }
 
 .ticket-number {
   min-width: 64px;
   color: var(--ink-strong);
   font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------------------ Badge ------------------------------ */
@@ -603,10 +648,10 @@ button:disabled,
 .badge {
   display: inline-block;
   padding: 3px 10px;
-  border: 1px solid var(--line-input);
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: #ffffff;
-  color: var(--ink-strong);
+  background: #f1f5f9;
+  color: #475569;
   font-size: 12px;
   font-weight: 600;
 }
@@ -618,57 +663,56 @@ button:disabled,
 }
 
 .badge-normal {
-  background: #f6f1fa;
-  color: var(--muted);
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .badge-lansia {
-  border-color: #cfdcf7;
-  background: #ecf2ff;
-  color: #5a74b8;
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
 }
 
 .badge-disabilitas {
-  border-color: #cdeadf;
-  background: #e8f7f0;
-  color: #3f8f78;
+  border-color: #99f6e4;
+  background: #f0fdfa;
+  color: #0f766e;
 }
 
 .badge-vip {
-  border-color: #f2dfae;
-  background: #fff4d6;
-  color: #a8741a;
+  background: var(--amber);
+  color: #ffffff;
 }
 
 .status-menunggu {
-  background: #f3edff;
-  color: #8667cc;
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
 }
 
 .status-dipanggil {
-  border-color: #f4c5e0;
-  background: #ffe6f4;
-  color: #c0488f;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #065f46;
 }
 
 .status-selesai {
-  border-color: #cfe9d9;
-  background: var(--ok-bg);
-  color: var(--ok);
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .status-dilewati {
-  border-color: #f2dfae;
-  background: #fff4d6;
-  color: #a8741a;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
 }
 
 .status-dibatalkan {
-  background: #f4f1f5;
-  color: #8b8190;
+  background: #f1f5f9;
+  color: #64748b;
 }
 
-/* ----------------------- Ambil antrian (publik) ----------------------- */
+/* ----------------------- Ambil antrean (publik) ----------------------- */
 
 .service-grid {
   display: grid;
@@ -682,14 +726,13 @@ button:disabled,
   align-content: start;
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at 100% 0%, #fce3f5 0, transparent 26%), #ffffff;
-  box-shadow: var(--shadow-soft);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
 }
 
 .service-card.is-disabled {
-  background: #faf7fb;
+  background: #f8fafc;
   box-shadow: none;
 }
 
@@ -739,12 +782,10 @@ button:disabled,
   gap: 18px;
   margin-bottom: 22px;
   padding: 24px 28px;
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 100% 0%, #fce3f5 0, transparent 30%),
-    radial-gradient(circle at 0% 100%, #eee5ff 0, transparent 30%), #ffffff;
-  box-shadow: var(--shadow);
+  border: 2px solid var(--amber);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow-lift);
 }
 
 .ticket-result-label {
@@ -756,11 +797,12 @@ button:disabled,
 
 .ticket-result-number {
   margin: 2px 0;
-  color: var(--heading);
+  color: var(--ink-strong);
   font-size: 56px;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
 }
 
 .ticket-result-detail {
@@ -785,10 +827,10 @@ button:disabled,
   max-width: calc(100% - 32px);
   padding: 13px 20px;
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
-  color: var(--ink-strong);
+  border-radius: 12px;
+  background: #172033;
+  box-shadow: var(--shadow-lift);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   transform: translateX(-50%);
@@ -798,18 +840,19 @@ button:disabled,
   width: min(100% - 32px, 400px);
   padding: 28px;
   border: 1px solid var(--line);
-  border-radius: 26px;
+  border-radius: 16px;
   background: #ffffff;
-  box-shadow: var(--shadow);
+  box-shadow: 0 20px 25px -5px #1720331f, 0 8px 10px -6px #17203314;
   color: var(--ink);
 }
 
 .dialog::backdrop {
-  background: #5a3a6a55;
+  background: #17203380;
 }
 
 .dialog h3 {
   margin: 0 0 10px;
+  color: var(--ink-strong);
 }
 
 .dialog p {
@@ -824,6 +867,12 @@ button:disabled,
   gap: 10px;
 }
 
+.dialog .btn-danger {
+  border-color: transparent;
+  background: var(--danger);
+  color: #ffffff;
+}
+
 /* ------------------------- Tabel (operator & layar) ------------------------- */
 
 table {
@@ -831,20 +880,28 @@ table {
   border-collapse: collapse;
   margin-top: 16px;
   overflow: hidden;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: #ffffff;
 }
 
 th,
 td {
   padding: 13px;
-  border-bottom: 1px solid #f3e8f1;
+  border-bottom: 1px solid var(--line);
   text-align: left;
 }
 
 th {
-  background: #f9eaf6;
-  color: #98618f;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+td strong {
+  font-variant-numeric: tabular-nums;
 }
 
 #queueMessage,
@@ -861,6 +918,10 @@ th {
 @media (max-width: 860px) {
   .admin-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -880,7 +941,7 @@ th {
   .welcome-card,
   .panel {
     padding: 20px;
-    border-radius: 24px;
+    border-radius: 12px;
   }
 
   .page-head h2 {

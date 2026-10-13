@@ -94,7 +94,7 @@ function initAdminPage() {
         if (queues.length === 0) {
             queueTypeList.append(el("li", {
                 class: "empty-state",
-                text: "Belum ada jenis antrian. Tambahkan lewat form di atas.",
+                text: "Belum ada jenis antrean. Tambahkan lewat form di atas.",
             }));
             return;
         }
@@ -139,7 +139,7 @@ function initAdminPage() {
     function renderTicketSelects(queues) {
         const selectedQueue = ticketQueue.value;
         const selectedPriority = ticketPriority.value || "normal";
-        ticketQueue.replaceChildren(el("option", { text: "Pilih jenis antrian", attrs: { value: "" } }));
+        ticketQueue.replaceChildren(el("option", { text: "Pilih jenis antrean", attrs: { value: "" } }));
         // jenis nonaktif tidak ditampilkan, sehingga tidak bisa dipilih.
         queues
             .filter((queue) => queue.isActive)
@@ -200,8 +200,20 @@ function initAdminPage() {
         renderQueueTypes(queues, tickets);
         renderTicketSelects(queues);
         renderTicketGroups(queues, tickets);
+        renderKpis(queues, tickets);
     }
-    // CRUD jenis antrian
+    function renderKpis(queues, tickets) {
+        const setKpi = (id, value) => {
+            const target = document.getElementById(id);
+            if (target)
+                target.textContent = String(value);
+        };
+        setKpi("kpiActive", queues.filter((queue) => queue.isActive).length);
+        setKpi("kpiWaiting", tickets.filter((ticket) => ticket.status === "menunggu").length);
+        setKpi("kpiCalled", tickets.filter((ticket) => ticket.status === "dipanggil").length);
+        setKpi("kpiDone", tickets.filter((ticket) => ticket.status === "selesai").length);
+    }
+    // CRUD jenis antrean
     codeInput.addEventListener("input", () => {
         codeInput.value = codeInput.value.toUpperCase();
     });
@@ -212,7 +224,7 @@ function initAdminPage() {
             setMessage(queueTypeMessage, result.error, "error");
             return;
         }
-        setMessage(queueTypeMessage, `Jenis antrian ${result.data.name} (${result.data.code}) berhasil ditambahkan.`, "success");
+        setMessage(queueTypeMessage, `Jenis antrean ${result.data.name} (${result.data.code}) berhasil ditambahkan.`, "success");
         queueTypeForm.reset();
         codeInput.focus();
         render(true);
@@ -235,7 +247,7 @@ function initAdminPage() {
         if (action === "delete") {
             const total = getTickets().filter((t) => t.queueType === code).length;
             const extra = total > 0 ? ` ${total} tiket di dalamnya ikut terhapus.` : "";
-            const agreed = await confirmAction("Hapus jenis antrian?", `${queue.name} (${queue.code}) akan dihapus.${extra}`, "Hapus");
+            const agreed = await confirmAction("Hapus jenis antrean?", `${queue.name} (${queue.code}) akan dihapus.${extra}`, "Hapus");
             if (!agreed)
                 return;
             const result = deleteQueueType(code);
@@ -250,7 +262,7 @@ function initAdminPage() {
         const code = ticketQueue.value;
         const priority = ticketPriority.value;
         if (!code) {
-            setMessage(ticketMessage, "Pilih jenis antrian terlebih dahulu.", "error");
+            setMessage(ticketMessage, "Pilih jenis antrean terlebih dahulu.", "error");
             return;
         }
         if (!isPriority(priority)) {
@@ -266,14 +278,14 @@ function initAdminPage() {
         setMessage(ticketMessage, `Tiket ${result.data.queueNumber} (${PRIORITY_LABEL[priority]}) berhasil diterbitkan.`, "success");
         render(true);
     });
-    // reset antrian
+    // reset antrean
     resetButton?.addEventListener("click", async () => {
-        const agreed = await confirmAction("Reset antrian?", "Semua tiket aktif akan dihapus dan penomoran kembali ke 001. Jenis antrian tidak ikut terhapus.", "Reset");
+        const agreed = await confirmAction("Reset antrean?", "Semua tiket aktif akan dihapus dan penomoran kembali ke 001. Jenis antrean tidak ikut terhapus.", "Reset");
         if (!agreed)
             return;
         resetQueues();
         setMessage(ticketMessage, "", "");
-        showToast("Antrian direset. Penomoran mulai dari 001.");
+        showToast("Antrean direset. Penomoran mulai dari 001.");
         render(true);
     });
     // operator bisa mengubah status tiket dari tab lain

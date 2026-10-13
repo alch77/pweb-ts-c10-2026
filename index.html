@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Admin | Antrean Rumah Sakit</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="index.css">
   <script type="module" src="dist/admin.js" defer></script>
 </head>
@@ -34,15 +35,34 @@
     <div class="page-head">
       <div>
         <h2>Dashboard Admin</h2>
-        <p class="page-sub">Reset setiap hari agar penomoran antrian mulai dari awal.</p>
+        <p class="page-sub">Reset setiap hari agar penomoran antrean mulai dari awal.</p>
       </div>
-      <button id="resetButton" type="button" class="btn btn-danger">Reset Antrian</button>
+      <button id="resetButton" type="button" class="btn btn-danger">Reset Antrean</button>
     </div>
 
+    <section class="kpi-grid" aria-label="Ringkasan antrean">
+      <article class="kpi-card">
+        <p class="kpi-label">Layanan Aktif</p>
+        <p class="kpi-value is-teal" id="kpiActive">-</p>
+      </article>
+      <article class="kpi-card">
+        <p class="kpi-label">Menunggu</p>
+        <p class="kpi-value is-amber" id="kpiWaiting">-</p>
+      </article>
+      <article class="kpi-card">
+        <p class="kpi-label">Dipanggil</p>
+        <p class="kpi-value" id="kpiCalled">-</p>
+      </article>
+      <article class="kpi-card">
+        <p class="kpi-label">Selesai</p>
+        <p class="kpi-value" id="kpiDone">-</p>
+      </article>
+    </section>
+
     <div class="admin-grid">
-      <!-- Manajemen jenis antrian -->
+      <!-- Manajemen jenis antrean -->
       <section class="panel" aria-labelledby="queueTypeTitle">
-        <h3 id="queueTypeTitle">Jenis antrian</h3>
+        <h3 id="queueTypeTitle">Jenis antrean</h3>
 
         <form id="queueTypeForm" class="inline-form" novalidate>
           <div class="field field-code">
@@ -84,7 +104,7 @@
 
         <form id="ticketForm" class="inline-form" novalidate>
           <div class="field field-grow">
-            <label for="ticketQueue">Jenis antrian</label>
+            <label for="ticketQueue">Jenis antrean</label>
             <select id="ticketQueue" name="ticketQueue"></select>
           </div>
 

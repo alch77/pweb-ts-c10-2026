@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambil Antrean | Rumah Sakit</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="index.css">
+  <script type="module" src="dist/ambil-antrean.js" defer></script>
+  <script type="module" src="dist/nav.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="ambil-antrean.html">
+      <span class="brand-mark" aria-hidden="true">✚</span>
+      <span>Antrean Rumah Sakit</span>
+    </a>
+
+    <nav aria-label="Navigasi utama">
+      <a href="ambil-antrean.html" aria-current="page">Ambil Antrean</a>
+      <a href="layar.html">Layar Antrean</a>
+      <a id="staffLink" href="login.html">Masuk Staf</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <div class="page-head">
+      <div>
+        <h2>Ambil nomor antrean</h2>
+        <p class="page-sub">Pilih jenis layanan untuk mengambil nomor antrean.</p>
+      </div>
+    </div>
+
+    <p id="takeMessage" class="form-message" role="status" aria-live="polite"></p>
+
+    <!-- Tiket terakhir yang diambil di perangkat ini -->
+    <section id="ticketResult" class="ticket-result" aria-live="polite" hidden>
+      <div class="ticket-result-main">
+        <p class="ticket-result-label">Nomor antrean kamu</p>
+        <p id="ticketNumber" class="ticket-result-number">-</p>
+        <p id="ticketDetail" class="ticket-result-detail"></p>
+      </div>
+      <div class="ticket-result-side">
+        <span id="ticketStatus" class="badge">-</span>
+        <p id="ticketHint" class="queue-meta"></p>
+        <button id="ticketDismiss" type="button" class="btn btn-ghost btn-sm">Tutup</button>
+      </div>
+    </section>
+
+    <section id="serviceGrid" class="service-grid" aria-label="Daftar jenis antrean"></section>
+
+    <p class="footnote">
+      Jenis antrean baru muncul otomatis. Data diperbarui <span id="lastUpdated">-</span>
+    </p>
+  </main>
+</body>
+</html>

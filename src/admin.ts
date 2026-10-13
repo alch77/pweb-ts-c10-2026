@@ -136,7 +136,7 @@ function initAdminPage(): void {
       queueTypeList!.append(
         el("li", {
           class: "empty-state",
-          text: "Belum ada jenis antrian. Tambahkan lewat form di atas.",
+          text: "Belum ada jenis antrean. Tambahkan lewat form di atas.",
         }),
       );
       return;
@@ -198,7 +198,7 @@ function initAdminPage(): void {
     const selectedPriority = ticketPriority!.value || "normal";
 
     ticketQueue!.replaceChildren(
-      el("option", { text: "Pilih jenis antrian", attrs: { value: "" } }),
+      el("option", { text: "Pilih jenis antrean", attrs: { value: "" } }),
     );
 
     // jenis nonaktif tidak ditampilkan, sehingga tidak bisa dipilih.
@@ -286,9 +286,31 @@ function initAdminPage(): void {
     renderQueueTypes(queues, tickets);
     renderTicketSelects(queues);
     renderTicketGroups(queues, tickets);
+    renderKpis(queues, tickets);
   }
 
-  // CRUD jenis antrian
+  function renderKpis(queues: QueueMaster[], tickets: Ticket[]): void {
+    const setKpi = (id: string, value: number): void => {
+      const target = document.getElementById(id);
+      if (target) target.textContent = String(value);
+    };
+
+    setKpi("kpiActive", queues.filter((queue) => queue.isActive).length);
+    setKpi(
+      "kpiWaiting",
+      tickets.filter((ticket) => ticket.status === "menunggu").length,
+    );
+    setKpi(
+      "kpiCalled",
+      tickets.filter((ticket) => ticket.status === "dipanggil").length,
+    );
+    setKpi(
+      "kpiDone",
+      tickets.filter((ticket) => ticket.status === "selesai").length,
+    );
+  }
+
+  // CRUD jenis antrean
   codeInput.addEventListener("input", () => {
     codeInput.value = codeInput.value.toUpperCase();
   });
@@ -305,7 +327,7 @@ function initAdminPage(): void {
 
     setMessage(
       queueTypeMessage,
-      `Jenis antrian ${result.data.name} (${result.data.code}) berhasil ditambahkan.`,
+      `Jenis antrean ${result.data.name} (${result.data.code}) berhasil ditambahkan.`,
       "success",
     );
 
@@ -343,7 +365,7 @@ function initAdminPage(): void {
         total > 0 ? ` ${total} tiket di dalamnya ikut terhapus.` : "";
 
       const agreed = await confirmAction(
-        "Hapus jenis antrian?",
+        "Hapus jenis antrean?",
         `${queue.name} (${queue.code}) akan dihapus.${extra}`,
         "Hapus",
       );
@@ -368,7 +390,7 @@ function initAdminPage(): void {
     if (!code) {
       setMessage(
         ticketMessage,
-        "Pilih jenis antrian terlebih dahulu.",
+        "Pilih jenis antrean terlebih dahulu.",
         "error",
       );
       return;
@@ -396,11 +418,11 @@ function initAdminPage(): void {
     render(true);
   });
 
-  // reset antrian
+  // reset antrean
   resetButton?.addEventListener("click", async () => {
     const agreed = await confirmAction(
-      "Reset antrian?",
-      "Semua tiket aktif akan dihapus dan penomoran kembali ke 001. Jenis antrian tidak ikut terhapus.",
+      "Reset antrean?",
+      "Semua tiket aktif akan dihapus dan penomoran kembali ke 001. Jenis antrean tidak ikut terhapus.",
       "Reset",
     );
 
@@ -408,7 +430,7 @@ function initAdminPage(): void {
 
     resetQueues();
     setMessage(ticketMessage, "", "");
-    showToast("Antrian direset. Penomoran mulai dari 001.");
+    showToast("Antrean direset. Penomoran mulai dari 001.");
     render(true);
   });
 

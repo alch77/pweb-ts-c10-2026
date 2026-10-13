@@ -1,6 +1,6 @@
 export type UserRole = "admin" | "moderator" | "user";
 
-// jenis antrian bersifat dinamis karena admin dapat menambah/menghapusnya, jadi bukan union tetap
+// jenis antrean bersifat dinamis karena admin dapat menambah/menghapusnya, jadi bukan union tetap
 export type QueueCode = string;
 
 /** @deprecated Gunakan QueueCode. Dipertahankan agar queue.ts & screen.ts tetap kompatibel. */
@@ -63,7 +63,7 @@ export interface QueueCounter {
   lastNumber: number;
 }
 
-// penyimpanan counter nomor terakhir per kode jenis antrian: { A: 3, B: 12 }
+// penyimpanan counter nomor terakhir per kode jenis antrean: { A: 3, B: 12 }
 export type QueueCounterMap = Record<QueueCode, number>;
 
 export interface QueueSummary {
