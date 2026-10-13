@@ -1,7 +1,7 @@
-const SESSION_KEY = "authSession";
-const QUEUE_KEY = "queueMaster";
-const TICKET_KEY = "ticketList";
-const COUNTER_KEY = "queueCounters";
+const SESSION_KEY = "user_session";
+const QUEUE_KEY = "queue_types";
+const TICKET_KEY = "queue_tickets";
+const COUNTER_KEY = "queue_counters";
 function readJSON(key, fallback) {
     const data = localStorage.getItem(key);
     if (!data)
@@ -26,11 +26,11 @@ export function getSession() {
 export function clearSession() {
     localStorage.removeItem(SESSION_KEY);
 }
-// data awal (sesuai contoh di soal)
+// data awal. Kode C sengaja dikosongkan: spek & panduan uji memakai
+// C sebagai contoh jenis antrean baru, jadi harus bebas di data awal.
 const DEFAULT_QUEUES = [
     { code: "A", name: "UMUM-1", isActive: true },
     { code: "B", name: "UMUM-2", isActive: true },
-    { code: "C", name: "UMUM-3", isActive: true },
     { code: "G", name: "GIGI", isActive: true },
     { code: "F", name: "FARMASI", isActive: true },
     { code: "P", name: "PSIKOLOG", isActive: true },

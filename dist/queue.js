@@ -1,10 +1,11 @@
-import { requireAuth } from "./guards.js";
+import { requireRole } from "./guards.js";
 import { getSession, getQueueMaster, getTickets } from "./storage.js";
 import { logout } from "./auth.js";
-import { PRIORITY_LABEL, STATUS_LABEL, callNextTicket, compareTicketsByPriority, finishCurrentTicket, getCurrentCalled, getNextTicket, skipCurrentTicket, speakTicket, } from "./queue-service.js";
+import { PRIORITY_LABEL, STATUS_LABEL, callNextTicket, compareTicketsByPriority, finishCurrentTicket, getCurrentCalled, getNextTicket, skipCurrentTicket, speakTicket, warmUpSpeech, } from "./queue-service.js";
 import { el, formatClock, setMessage } from "./dom.js";
-// Auth Guard: semua role yang sudah login boleh membuka panel operator.
-if (requireAuth()) {
+// Auth Guard + Role Guard (revisi 13 Okt 2026): operator khusus
+// admin & moderator. Role user hanya boleh ambil-antrean + layar.
+if (requireRole(["admin", "moderator"])) {
     initOperatorPage();
 }
 function queueNameOf(code) {
@@ -15,7 +16,6 @@ function initOperatorPage() {
     const userName = document.querySelector("#userName");
     const userRole = document.querySelector("#userRole");
     const logoutButton = document.querySelector("#logoutButton");
-    const dashboardLink = document.querySelector("#dashboardLink");
     const welcome = document.querySelector("#welcomeMessage");
     const currentNumber = document.querySelector("#currentNumber");
     const currentDetail = document.querySelector("#currentDetail");
@@ -46,12 +46,10 @@ function initOperatorPage() {
             userRole.textContent = session.role;
         if (welcome)
             welcome.textContent = `Halo, ${session.firstName}! Kelola pemanggilan.`;
-        // User biasa tidak punya akses dashboard admin: sembunyikan tautannya.
-        if (session.role === "user" && dashboardLink) {
-            dashboardLink.hidden = true;
-        }
     }
     logoutButton?.addEventListener("click", logout);
+    // Siapkan suara sejak interaksi pertama agar klik panggil perdana bersuara.
+    window.addEventListener("pointerdown", warmUpSpeech, { once: true });
     let soundOn = true;
     let toastTimer;
     function showToast(text) {

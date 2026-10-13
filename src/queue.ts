@@ -1,4 +1,4 @@
-import { requireAuth } from "./guards.js";
+import { requireRole } from "./guards.js";
 import { getSession, getQueueMaster, getTickets } from "./storage.js";
 import { logout } from "./auth.js";
 import {
@@ -11,12 +11,14 @@ import {
   getNextTicket,
   skipCurrentTicket,
   speakTicket,
+  warmUpSpeech,
 } from "./queue-service.js";
 import { el, formatClock, setMessage } from "./dom.js";
 import type { Ticket } from "./types.js";
 
-// Auth Guard: semua role yang sudah login boleh membuka panel operator.
-if (requireAuth()) {
+// Auth Guard + Role Guard (revisi 13 Okt 2026): operator khusus
+// admin & moderator. Role user hanya boleh ambil-antrean + layar.
+if (requireRole(["admin", "moderator"])) {
   initOperatorPage();
 }
 
@@ -29,7 +31,6 @@ function initOperatorPage(): void {
   const userName = document.querySelector<HTMLElement>("#userName");
   const userRole = document.querySelector<HTMLElement>("#userRole");
   const logoutButton = document.querySelector<HTMLButtonElement>("#logoutButton");
-  const dashboardLink = document.querySelector<HTMLAnchorElement>("#dashboardLink");
   const welcome = document.querySelector<HTMLElement>("#welcomeMessage");
 
   const currentNumber = document.querySelector<HTMLElement>("#currentNumber");
@@ -62,13 +63,12 @@ function initOperatorPage(): void {
     if (userName) userName.textContent = session.firstName;
     if (userRole) userRole.textContent = session.role;
     if (welcome) welcome.textContent = `Halo, ${session.firstName}! Kelola pemanggilan.`;
-    // User biasa tidak punya akses dashboard admin: sembunyikan tautannya.
-    if (session.role === "user" && dashboardLink) {
-      dashboardLink.hidden = true;
-    }
   }
 
   logoutButton?.addEventListener("click", logout);
+
+  // Siapkan suara sejak interaksi pertama agar klik panggil perdana bersuara.
+  window.addEventListener("pointerdown", warmUpSpeech, { once: true });
 
   let soundOn = true;
   let toastTimer: number | undefined;

@@ -113,19 +113,24 @@ if (form && usernameInput && passwordInput && errorMessage && loginButton) {
         role: session.role,
       });
 
-      // Admin & moderator -> Dashboard Admin, user biasa -> Panel Operator
+      // Admin & moderator -> Dashboard Admin, user biasa -> Ambil Antrean
+      // (revisi 13 Okt 2026: operator khusus admin/moderator).
       if (session.role === "admin" || session.role === "moderator") {
         window.location.replace("index.html");
       } else {
-        window.location.replace("operator.html");
+        window.location.replace("ambil-antrean.html");
       }
     } catch (error: unknown) {
       clearSession();
 
+      // fetch yang gagal total (offline/DNS) melempar TypeError:
+      // tampilkan pesan koneksi, bukan pesan teknis browser.
       errorMessage.textContent =
-        error instanceof Error
-          ? error.message
-          : "Terjadi kesalahan. Silakan coba lagi.";
+        error instanceof TypeError
+          ? "Tidak dapat terhubung ke server. Periksa koneksi internet kamu."
+          : error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan. Silakan coba lagi.";
 
       console.error("Login gagal:", error);
     } finally {

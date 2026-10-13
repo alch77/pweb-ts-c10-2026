@@ -119,6 +119,31 @@ export function addQueueType(
 ): Result<QueueMaster> {
   const code = codeInput.trim();
   const name = normalizeName(nameInput);
+  const queues = getQueueMaster();
+
+  // Cek duplikasi dulu (tak bedakan kapital): "c" tetap bentrok dengan "C".
+  const codeTaken =
+    code.length > 0 &&
+    queues.some(
+      (queue) => queue.code.toUpperCase() === code.toUpperCase(),
+    );
+
+  if (codeTaken) {
+    return fail(
+      `Kode "${code.toUpperCase()}" sudah dipakai jenis antrean lain.`,
+    );
+  }
+
+  const nameTaken =
+    name.length > 0 &&
+    queues.some(
+      (queue) =>
+        normalizeName(queue.name).toLowerCase() === name.toLowerCase(),
+    );
+
+  if (nameTaken) {
+    return fail(`Nama "${name}" sudah dipakai jenis antrean lain.`);
+  }
 
   if (!/^[A-Z]$/.test(code)) {
     return fail("Kode harus berupa 1 huruf kapital (A–Z).");
@@ -130,25 +155,6 @@ export function addQueueType(
 
   if (name.length > 30) {
     return fail("Nama layanan maksimal 30 karakter.");
-  }
-
-  const queues = getQueueMaster();
-
-  // cek duplikasi, ga bedain huruf besar/kecil
-  const codeTaken = queues.some(
-    (queue) => queue.code.toUpperCase() === code.toUpperCase(),
-  );
-
-  if (codeTaken) {
-    return fail(`Kode "${code}" sudah dipakai jenis antrean lain.`);
-  }
-
-  const nameTaken = queues.some(
-    (queue) => normalizeName(queue.name).toLowerCase() === name.toLowerCase(),
-  );
-
-  if (nameTaken) {
-    return fail(`Nama "${name}" sudah dipakai jenis antrean lain.`);
   }
 
   const created: QueueMaster = { code, name, isActive: true };
@@ -326,7 +332,9 @@ export function speakTicket(ticket: Ticket, queueName: string): void {
   try {
     if (!("speechSynthesis" in window)) return;
 
-    window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    // Hentikan antrean lama agar panggilan tak bertumpuk.
+    synth.cancel();
 
     const spoken = ticket.queueNumber.replace("-", " ");
     const utterance = new SpeechSynthesisUtterance(
@@ -335,8 +343,34 @@ export function speakTicket(ticket: Ticket, queueName: string): void {
     utterance.lang = "id-ID";
     utterance.rate = 0.95;
 
-    window.speechSynthesis.speak(utterance);
+    // Pilih suara Indonesia bila tersedia, jika tidak pakai bawaan.
+    const voice = synth
+      .getVoices()
+      .find((item) => item.lang.toLowerCase().startsWith("id"));
+
+    if (voice) utterance.voice = voice;
+
+    // Jeda setelah cancel: di Chrome, speak() yang dipanggil se-task
+    // dengan cancel() ikut terhapus sehingga sunyi.
+    window.setTimeout(() => {
+      try {
+        if (synth.paused) synth.resume();
+        synth.speak(utterance);
+      } catch {
+        // Abaikan: audio hanya bonus, bukan alur utama.
+      }
+    }, 150);
   } catch {
     // Abaikan: audio hanya bonus, bukan alur utama.
+  }
+}
+
+/** Pemanasan TTS sekali saat interaksi pertama (suara belum siap di klik awal). */
+export function warmUpSpeech(): void {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.getVoices();
+  } catch {
+    // Abaikan.
   }
 }
